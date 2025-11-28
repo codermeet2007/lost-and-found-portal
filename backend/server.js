@@ -7,13 +7,12 @@ const cors = require('cors');
 const fs = require('fs');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
-// Middleware - CORS FIX ADD KAR DIYA
-app.use(cors({
-  origin: "http://127.0.0.1:5500",
-  credentials: true
-}));
+// Simple CORS (sab origin allow)
+app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -914,3 +913,4 @@ app.get('/api/admin/users', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
