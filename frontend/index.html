@@ -3608,7 +3608,7 @@ const BACKEND_URL = 'http://localhost:3000'; // abhi local, baad me Render URL d
             }
             
             try {
-                const response = await fetch('http://localhost:3000/api/login', {
+                const response = await fetch(`${BACKEND_URL}/api/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -3672,7 +3672,7 @@ const BACKEND_URL = 'http://localhost:3000'; // abhi local, baad me Render URL d
                 
                 if (response.ok) {
                     // auto-login after signup
-                    const loginResponse = await fetch('http://localhost:3000/api/login', {
+                    const loginResponse = await fetch(`${BACKEND_URL}/api/login`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
