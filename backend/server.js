@@ -47,9 +47,16 @@ const initializeDatabase = () => {
   const createClaimsTable = `
   CREATE TABLE IF NOT EXISTS claims (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    ...
+    report_id INT NOT NULL,
+    claimer_id INT NOT NULL,
+    message TEXT NOT NULL,
+    status ENUM('pending','approved','rejected') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT NULL
   )
 `;
+
+
 
 
 
@@ -910,6 +917,7 @@ app.get('/api/admin/users', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 
 
 
