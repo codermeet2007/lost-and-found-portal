@@ -3711,43 +3711,58 @@ signupSubmit.addEventListener('click', async () => {
 
 
         // Profile upload handler
-        profileUpload.addEventListener('change', async (e) => {
-            if (e.target.files && e.target.files[0]) {
-                const user = JSON.parse(localStorage.getItem('loggedInUser'));
-                if (!user) {
-                    alert('Please login/signup first.');
-                    return;
-                }
-                const file = e.target.files[0];
-                const formData = new FormData();
-                formData.append('profilePicture', file);
-                formData.append('userId', user.id);
-                try {
-                    const response = await fetch('${BACKEND_URL}/api/upload-profile', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const data = await response.json();
-                    if (response.ok) {
-                        const returnedPath = data.profilePicture;
-                        user.profilePicture = returnedPath;
-                        localStorage.setItem('loggedInUser', JSON.stringify(user));
-                        profilePicture.src = returnedPath.startsWith('http')
-                        ? returnedPath
-                        : `${BACKEND_URL}/${returnedPath}`;
-                        uploadProfile.style.display = 'none';
-                        dashboard.style.display = 'block';
-                        viewPortalCard.style.display = 'block';
-                        alert('Profile picture uploaded successfully!');
-                    } else {
-                        alert(data.error || 'Upload failed. Try again.');
-                    }
-                } catch (err) {
-                    console.error('Upload error:', err);
-                    alert('Failed to upload profile picture. Please try again.');
-                }
+        // Profile upload handler
+profileUpload.addEventListener('change', async (e) => {
+    if (e.target.files && e.target.files[0]) {
+        const user = JSON.parse(localStorage.getItem('loggedInUser'));
+        if (!user) {
+            alert('Please login/signup first.');
+            return;
+        }
+
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('profilePicture', file);
+        formData.append('userId', user.id);
+
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/upload-profile`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch {
+                data = { error: text || 'Unknown error from server' };
             }
-        });
+
+            if (response.ok) {
+                const returnedPath = data.profilePicture;
+                user.profilePicture = returnedPath;
+                localStorage.setItem('loggedInUser', JSON.stringify(user));
+
+                profilePicture.src = returnedPath.startsWith('http')
+                    ? returnedPath
+                    : `${BACKEND_URL}/${returnedPath}`;
+
+                uploadProfile.style.display = 'none';
+                dashboard.style.display = 'block';
+                viewPortalCard.style.display = 'block';
+                alert('Profile picture uploaded successfully!');
+            } else {
+                alert(data.error || 'Upload failed. Try again.');
+            }
+        } catch (err) {
+            console.error('Upload error:', err);
+            alert('Failed to upload profile picture. Please try again.');
+        }
+    }
+});
+
+
 
         // Initialize the application
         checkLoginStatus();
