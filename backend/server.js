@@ -45,16 +45,13 @@ db.connect((err) => {
 
 const initializeDatabase = () => {
   const createClaimsTable = `
-    CREATE TABLE IF NOT EXISTS claims (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      report_id INT NOT NULL,
-      claimer_id INT NOT NULL,
-      message TEXT NOT NULL,
-      status ENUM('pending','approved','rejected') DEFAULT 'pending',
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-  `;
+  CREATE TABLE IF NOT EXISTS claims (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ...
+  )
+`;
+
+
 
   const createNotificationsTable = `
     CREATE TABLE IF NOT EXISTS notifications (
@@ -913,6 +910,7 @@ app.get('/api/admin/users', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 
 
 
