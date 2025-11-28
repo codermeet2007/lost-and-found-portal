@@ -367,7 +367,7 @@ app.post('/api/save-report', upload.single('itemPhoto'), async (req, res) => {
             date: match.date,
             contact: match.contact,
             reward: match.reward,
-            photo: match.photo_path ? `http://localhost:3000/${match.photo_path}` : null,
+            photo: match.photo_path ? `${BASE_URL}/${match.photo_path}` : null,
             userId: match.user_id,
             userName: match.user_name,
             userPhone: match.user_phone,
@@ -475,7 +475,7 @@ app.get('/api/reports', (req, res) => {
       date: report.date,
       contact: report.contact,
       reward: report.reward,
-      photo: report.photo_path ? `http://localhost:3000/${report.photo_path}` : null,
+      photo: report.photo_path ? `${BASE_URL}/${report.photo_path}` : null,
       userId: report.user_id,
       id: report.id.toString(),
       createdAt: report.created_at,
@@ -511,7 +511,7 @@ app.get('/api/user-reports/:userId', (req, res) => {
         date: report.date,
         contact: report.contact,
         reward: report.reward,
-        photo: report.photo_path ? `http://localhost:3000/${report.photo_path}` : null,
+        photo: report.photo_path ? `${BASE_URL}/${report.photo_path}` : null,
         userId: report.user_id,
         id: report.id.toString(),
         createdAt: report.created_at,
@@ -776,7 +776,7 @@ app.get('/api/matches/:userId', (req, res) => {
         type: row.match_type,
         location: row.match_location,
         date: row.match_date,
-        photo: row.match_photo_path ? `http://localhost:3000/${row.match_photo_path}` : null,
+        photo: row.match_photo_path ? `${BASE_URL}/${row.match_photo_path}` : null,
         userId: row.match_user_id,
         userName: row.match_user_name,
         userPhone: row.match_user_phone,
@@ -865,7 +865,7 @@ app.get('/api/admin/reports', (req, res) => {
         date: report.date,
         contact: report.contact,
         reward: report.reward,
-        photo: report.photo_path ? `http://localhost:3000/${report.photo_path}` : null,
+        photo: report.photo_path ? `${BASE_URL}/${report.photo_path}` : null,
         userId: report.user_id,
         id: report.id.toString(),
         createdAt: report.created_at,
@@ -913,5 +913,6 @@ app.get('/api/admin/users', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
 
 
