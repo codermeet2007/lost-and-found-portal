@@ -3594,115 +3594,121 @@
         });
 
         // Login form submission
-        loginSubmit.addEventListener('click', async () => {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            if (!email || !password) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    localStorage.setItem('loggedInUser', JSON.stringify(data.user));
-                    checkLoginStatus();
-                    hideModal(loginModal);
-                    document.getElementById('loginEmail').value = '';
-                    document.getElementById('loginPassword').value = '';
-                    if (data.user.profilePicture) {
-                        showPage(dashboard);
-                    }
-                } else {
-                    alert(data.error || 'Login failed. Please try again.');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                alert('Login failed. Please make sure the backend server is running.');
-            }
+        // Login form submission
+loginSubmit.addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    if (!email || !password) {
+        alert('Please fill in all fields');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
         });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem('loggedInUser', JSON.stringify(data.user));
+            checkLoginStatus();
+            hideModal(loginModal);
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            if (data.user.profilePicture) {
+                showPage(dashboard);
+            }
+        } else {
+            alert(data.error || 'Login failed. Please try again.');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Login failed. Please make sure the backend server is running.');
+    }
+});
+
+
 
         // Signup form submission
-        signupSubmit.addEventListener('click', async () => {
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const phone = document.getElementById('signupPhone').value;
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupConfirmPassword').value;
-            
-            if (!name || !email || !phone || !password || !confirmPassword) {
-                alert('Please fill in all fields including phone number');
-                return;
-            }
-            
-            if (phone.length < 10) {
-                alert('Please enter a valid phone number (at least 10 digits)');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                alert('Passwords do not match');
-                return;
-            }
-            
-            try {
-                const response = await fetch('${BACKEND_URL}/api/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name, email, phone, password })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    // auto-login after signup
-                    const loginResponse = await fetch(`${BACKEND_URL}/api/login`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ email, password })
-                    });
-                    
-                    const loginData = await loginResponse.json();
-                    
-                    if (loginResponse.ok) {
-                        localStorage.setItem('loggedInUser', JSON.stringify(loginData.user));
-                        checkLoginStatus();
+        // Signup form submission
+signupSubmit.addEventListener('click', async () => {
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const phone = document.getElementById('signupPhone').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirmPassword').value;
 
-                        if (loginData.user && loginData.user.profilePicture) {
-                            showPage(dashboard);
-                        }
+    if (!name || !email || !phone || !password || !confirmPassword) {
+        alert('Please fill in all fields including phone number');
+        return;
+    }
 
-                        hideModal(signupModal);
-                        document.getElementById('signupName').value = '';
-                        document.getElementById('signupEmail').value = '';
-                        document.getElementById('signupPhone').value = '';
-                        document.getElementById('signupPassword').value = '';
-                        document.getElementById('signupConfirmPassword').value = '';
-                    } else {
-                        alert(loginData.error || 'Signup created but login failed. Please try logging in.');
-                    }
-                } else {
-                    alert(data.error);
-                }
-            } catch (error) {
-                console.error('Signup error:', error);
-                alert('Signup failed. Please make sure the backend server is running.');
-            }
+    if (phone.length < 10) {
+        alert('Please enter a valid phone number (at least 10 digits)');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/signup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, email, phone, password })
         });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // auto-login after signup
+            const loginResponse = await fetch(`${BACKEND_URL}/api/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const loginData = await loginResponse.json();
+
+            if (loginResponse.ok) {
+                localStorage.setItem('loggedInUser', JSON.stringify(loginData.user));
+                checkLoginStatus();
+
+                if (loginData.user && loginData.user.profilePicture) {
+                    showPage(dashboard);
+                }
+
+                hideModal(signupModal);
+                document.getElementById('signupName').value = '';
+                document.getElementById('signupEmail').value = '';
+                document.getElementById('signupPhone').value = '';
+                document.getElementById('signupPassword').value = '';
+                document.getElementById('signupConfirmPassword').value = '';
+            } else {
+                alert(loginData.error || 'Signup created but login failed. Please try logging in.');
+            }
+        } else {
+            alert(data.error);
+        }
+    } catch (error) {
+        console.error('Signup error:', error);
+        alert('Signup failed. Please make sure the backend server is running.');
+    }
+});
+
+
 
         // Profile upload handler
         profileUpload.addEventListener('change', async (e) => {
