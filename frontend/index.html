@@ -3712,6 +3712,7 @@ signupSubmit.addEventListener('click', async () => {
 
         // Profile upload handler
         // Profile upload handler
+// Profile upload handler
 profileUpload.addEventListener('change', async (e) => {
     if (e.target.files && e.target.files[0]) {
         const user = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -3721,6 +3722,7 @@ profileUpload.addEventListener('change', async (e) => {
         }
 
         const file = e.target.files[0];
+
         const formData = new FormData();
         formData.append('profilePicture', file);
         formData.append('userId', user.id);
@@ -3736,11 +3738,13 @@ profileUpload.addEventListener('change', async (e) => {
             try {
                 data = JSON.parse(text);
             } catch {
+                console.error('Non-JSON upload response:', text);
                 data = { error: text || 'Unknown error from server' };
             }
 
             if (response.ok) {
                 const returnedPath = data.profilePicture;
+
                 user.profilePicture = returnedPath;
                 localStorage.setItem('loggedInUser', JSON.stringify(user));
 
@@ -3751,8 +3755,10 @@ profileUpload.addEventListener('change', async (e) => {
                 uploadProfile.style.display = 'none';
                 dashboard.style.display = 'block';
                 viewPortalCard.style.display = 'block';
+
                 alert('Profile picture uploaded successfully!');
             } else {
+                console.error('Upload failed response:', data);
                 alert(data.error || 'Upload failed. Try again.');
             }
         } catch (err) {
@@ -3761,6 +3767,7 @@ profileUpload.addEventListener('change', async (e) => {
         }
     }
 });
+
 
 
 
