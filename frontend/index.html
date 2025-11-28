@@ -3734,7 +3734,8 @@ const BACKEND_URL = 'http://localhost:3000'; // abhi local, baad me Render URL d
                         localStorage.setItem('loggedInUser', JSON.stringify(user));
                         profilePicture.src = returnedPath.startsWith('http')
                         ? returnedPath
-                        : `http://localhost:3000/${returnedPath}`;
+                        : `${BACKEND_URL}/${returnedPath}`
+;
                         uploadProfile.style.display = 'none';
                         dashboard.style.display = 'block';
                         viewPortalCard.style.display = 'block';
