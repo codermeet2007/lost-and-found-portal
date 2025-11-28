@@ -26,10 +26,10 @@ app.use('/uploads', express.static(uploadsDir));
 
 // Database connection - PASSWORD CHANGE KARNA
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Meet1234@',
-  database: 'lost_and_found'
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'Meet1234@',
+  database: process.env.DB_NAME || 'lost_and_found'
 });
 
 // Connect to database
@@ -913,4 +913,5 @@ app.get('/api/admin/users', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
 
