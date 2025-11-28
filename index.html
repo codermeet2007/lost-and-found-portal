@@ -1,0 +1,3760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost and Found Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+        }
+
+        body.admin-theme {
+            background: linear-gradient(135deg, #ffe0e0 0%, #ffb3c1 100%);
+        }
+
+        body.admin-theme header {
+            background: #fff5f5;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+            box-shadow: 0 10px 30px rgba(220, 53, 69, 0.15);
+        }
+
+        body.admin-theme .logo h1,
+        body.admin-theme .logo i {
+            color: #c82333;
+        }
+
+        body.admin-theme .theme-toggle {
+            background: #dc3545;
+        }
+
+        body.admin-theme .admin-dashboard {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(220, 53, 69, 0.15);
+            box-shadow: 0 20px 40px rgba(220, 53, 69, 0.15);
+        }
+
+        body.admin-theme .tab-btn.active {
+            background: #dc3545;
+            color: white;
+        }
+
+        body.admin-theme .tab-btn:not(.active) {
+            border-color: rgba(220, 53, 69, 0.2);
+            color: #c82333;
+        }
+
+        body.admin-theme .tab-btn:not(.active):hover {
+            background: rgba(220, 53, 69, 0.08);
+        }
+
+        body.admin-theme .admin-report-item,
+        body.admin-theme .admin-user-item {
+            border-left: 6px solid #dc3545;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            color: #4361ee;
+            font-size: 28px;
+            margin-left: 10px;
+        }
+        
+        .logo i {
+            font-size: 32px;
+            color: #4361ee;
+        }
+        
+        .auth-container {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .auth-btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .login-btn, .signup-btn {
+            background: transparent;
+            border: 2px solid #4361ee;
+            color: #4361ee;
+        }
+        
+        .login-btn:hover, .signup-btn:hover {
+            background: #4361ee;
+            color: white;
+        }
+
+        /* ✅ ADMIN BUTTON STYLING */
+        .admin-btn {
+            background: #dc3545 !important;
+            color: white !important;
+            border: 2px solid #dc3545 !important;
+        }
+
+        .admin-btn:hover {
+            background: #c82333 !important;
+            border-color: #c82333 !important;
+        }
+        
+        .profile-container {
+            display: none;
+            position: relative;
+        }
+        
+        .profile-container.active {
+            display: block;
+        }
+        
+        .theme-toggle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #4361ee;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .theme-toggle:hover {
+            background: #3a56d4;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+        
+        .profile-picture {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #4361ee;
+            cursor: pointer;
+        }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            overflow: hidden;
+            z-index: 100;
+        }
+        
+        .dropdown-item {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .dropdown-item i {
+            margin-right: 10px;
+            color: #4361ee;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .hero h2 {
+            font-size: 42px;
+            color: #4361ee;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 18px;
+            color: #6c757d;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .cta-btn {
+            padding: 15px 30px;
+            background: #4361ee;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .cta-btn:hover {
+            background: #3a56d4;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 40px;
+            color: #4361ee;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #343a40;
+        }
+        
+        .feature-card p {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            background: #4361ee;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+
+        .listings-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 6px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            font-size: 14px;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .filter-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-apply {
+            background: #4361ee;
+            color: white;
+        }
+
+        .filter-reset {
+            background: #e9ecef;
+            color: #343a40;
+        }
+
+        .filter-apply:hover {
+            background: #3a56d4;
+        }
+
+        .filter-reset:hover {
+            background: #dee2e6;
+        }
+
+        .report-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-open {
+            background: rgba(67, 97, 238, 0.1);
+            color: #4361ee;
+        }
+
+        .status-pending_claim {
+            background: rgba(255, 193, 7, 0.15);
+            color: #d97706;
+        }
+
+        .status-matched,
+        .status-closed {
+            background: rgba(40, 167, 69, 0.15);
+            color: #1b7f3c;
+        }
+
+        .claims-page,
+        .matches-modal,
+        .notifications-modal {
+            display: none;
+        }
+
+        .claims-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .claims-board {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .claim-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid #f0f0f0;
+        }
+
+        .claim-card h4 {
+            margin-bottom: 10px;
+            color: #343a40;
+        }
+
+        .claim-meta {
+            font-size: 14px;
+            color: #6c757d;
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+
+        .claim-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .claim-actions button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .claim-approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .claim-reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        .claim-approve:hover {
+            background: #218838;
+        }
+
+        .claim-reject:hover {
+            background: #c82333;
+        }
+
+        .matches-list,
+        .notifications-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .match-card,
+        .notification-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #f1f1f1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .match-card h4 {
+            margin-bottom: 10px;
+            color: #343a40;
+        }
+
+        .match-info,
+        .notification-body {
+            font-size: 14px;
+            color: #6c757d;
+            line-height: 1.5;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #dc3545;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .claim-modal-info {
+            margin-bottom: 15px;
+            color: #495057;
+            font-size: 15px;
+        }
+
+        .notifications-empty,
+        .claims-empty,
+        .matches-empty {
+            text-align: center;
+            color: #6c757d;
+            padding: 30px 20px;
+        }
+
+        .claim-btn {
+            margin-top: 12px;
+            width: 100%;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            background: #17a2b8;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .claim-btn:hover {
+            background: #138496;
+        }
+
+        .card-note {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            padding: 0 30px 20px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #4361ee;
+            outline: none;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .file-upload {
+            border: 2px dashed #dee2e6;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-upload:hover {
+            border-color: #4361ee;
+            background: #f8f9fa;
+        }
+        
+        .file-upload i {
+            font-size: 48px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .file-upload p {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .file-name {
+            font-size: 14px;
+            color: #4361ee;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+        
+        .modal-footer {
+            padding: 20px 30px 30px;
+            text-align: center;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #4361ee;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 15px rgba(67, 97, 238, 0.4);
+        }
+        
+        .submit-btn:hover {
+            background: #3a56d4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .submit-btn.loading {
+            pointer-events: none;
+        }
+        
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .switch-form {
+            margin-top: 20px;
+            color: #6c757d;
+        }
+        
+        .switch-form a {
+            color: #4361ee;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .dashboard {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .dashboard-header h2 {
+            color: #4361ee;
+        }
+        
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .dashboard-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(67, 97, 238, 0.15);
+            border-color: #4361ee;
+            background: white;
+        }
+        
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(67, 97, 238, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .dashboard-card:hover::before {
+            left: 100%;
+        }
+        
+        .dashboard-card h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .dashboard-card h3 i {
+            margin-right: 10px;
+            color: #4361ee;
+        }
+        
+        .upload-profile {
+            text-align: center;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: none;
+        }
+        
+        .upload-profile h3 {
+            color: #4361ee;
+            margin-bottom: 20px;
+        }
+        
+        .upload-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #4361ee;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        
+        .upload-btn:hover {
+            background: #3a56d4;
+        }
+        
+        .profile-page, .settings-page, .reports-page {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f1f3f4;
+        }
+        
+        .page-header h2 {
+            color: #4361ee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .page-header h2 i {
+            margin-right: 10px;
+        }
+        
+        .back-btn {
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #5a6268;
+        }
+        
+        .profile-details, .settings-options {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #f1f3f4;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .detail-value {
+            color: #6c757d;
+        }
+        
+        .password-mask {
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+        
+        .settings-option {
+            padding: 20px;
+            border-bottom: 1px solid #f1f3f4;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .settings-option:hover {
+            background: #f8f9fa;
+        }
+        
+        .settings-option h3 {
+            color: #495057;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .settings-option h3 i {
+            margin-right: 10px;
+            color: #4361ee;
+        }
+        
+        .settings-option p {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        /* Report Form Styles */
+        .report-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .cancel-btn {
+            padding: 15px 25px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        .cancel-btn:hover {
+            background: #5a6268;
+        }
+        
+        .cancel-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Reports List Styles */
+        .reports-list {
+            display: grid;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .report-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #4361ee;
+            transition: all 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .report-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .report-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4361ee;
+        }
+        
+        .report-type {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .report-type.lost {
+            background: #ffeaa7;
+            color: #e17055;
+        }
+        
+        .report-type.found {
+            background: #a29bfe;
+            color: white;
+        }
+        
+        .report-details {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .report-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #adb5bd;
+            margin-bottom: 10px;
+        }
+        
+        .report-photo img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 2px solid #dee2e6;
+        }
+        
+        .report-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .delete-btn {
+            padding: 8px 16px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+        
+        .delete-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .no-reports {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+        
+        .no-reports i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #dee2e6;
+        }
+        
+        .coming-soon {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .coming-soon i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #dee2e6;
+        }
+        
+        .coming-soon h3 {
+            color: #495057;
+            margin-bottom: 10px;
+        }
+        
+        /* ✅ NEW: Contact Modal Styling */
+        .contact-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .contact-modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .contact-modal-header {
+            background: #4361ee;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .contact-modal-body {
+            padding: 30px;
+        }
+
+        .contact-info-modal {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .contact-item-modal {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #4361ee;
+        }
+
+        .contact-item-modal i {
+            color: #4361ee;
+            width: 20px;
+            font-size: 18px;
+        }
+
+        .contact-label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 120px;
+        }
+
+        .contact-value {
+            color: #4361ee;
+            font-weight: 500;
+        }
+
+        /* ✅ ADMIN DASHBOARD STYLING */
+        .admin-dashboard {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f1f3f4;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #4361ee;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .admin-report-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4361ee;
+        }
+
+        .admin-user-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+            margin-top: 30px;
+        }
+        
+        /* Dark Theme Styles */
+        body.dark-theme {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme header {
+            background: #2d2d44;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        body.dark-theme .logo h1 {
+            color: #64b5f6;
+        }
+        
+        body.dark-theme .logo i {
+            color: #64b5f6;
+        }
+        
+        body.dark-theme .hero {
+            background: #2d2d44;
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .hero h2 {
+            color: #64b5f6;
+        }
+        
+        body.dark-theme .hero p {
+            color: #b0b0b0;
+        }
+        
+        body.dark-theme .feature-card {
+            background: #2d2d44;
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .feature-card h3 {
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .feature-card p {
+            color: #b0b0b0;
+        }
+        
+        body.dark-theme .dashboard {
+            background: #2d2d44;
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .dashboard-header h2 {
+            color: #64b5f6;
+        }
+        
+        body.dark-theme .dashboard-card {
+            background: #1e1e2e;
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .dashboard-card:hover {
+            background: #252538;
+        }
+        
+        body.dark-theme .dashboard-card h3 {
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .modal-content {
+            background: #2d2d44;
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .modal-header {
+            background: #4361ee;
+        }
+        
+        body.dark-theme .form-group input,
+        body.dark-theme .form-group select,
+        body.dark-theme .form-group textarea {
+            background: #1e1e2e;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .form-group input:focus,
+        body.dark-theme .form-group select:focus,
+        body.dark-theme .form-group textarea:focus {
+            border-color: #64b5f6;
+        }
+        
+        body.dark-theme .dropdown-menu {
+            background: #2d2d44;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        body.dark-theme .dropdown-item {
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .dropdown-item:hover {
+            background: #1e1e2e;
+        }
+        
+        body.dark-theme .profile-page,
+        body.dark-theme .settings-page,
+        body.dark-theme .reports-page,
+        body.dark-theme .upload-profile {
+            background: #2d2d44;
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .page-header h2 {
+            color: #64b5f6;
+        }
+        
+        body.dark-theme .detail-item {
+            border-bottom-color: #444;
+        }
+        
+        body.dark-theme .detail-label {
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .detail-value {
+            color: #b0b0b0;
+        }
+        
+        body.dark-theme .settings-option {
+            border-bottom-color: #444;
+        }
+        
+        body.dark-theme .settings-option:hover {
+            background: #1e1e2e;
+        }
+        
+        body.dark-theme .report-item {
+            background: #1e1e2e;
+            border-left-color: #64b5f6;
+        }
+        
+        body.dark-theme .report-item:hover {
+            background: #252538;
+        }
+        
+        body.dark-theme .report-title {
+            color: #64b5f6;
+        }
+        
+        body.dark-theme .report-details {
+            color: #b0b0b0;
+        }
+        
+        body.dark-theme .admin-dashboard {
+            background: #2d2d44;
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .admin-report-item,
+        body.dark-theme .admin-user-item {
+            background: #1e1e2e;
+        }
+        
+        body.dark-theme footer {
+            color: #b0b0b0;
+        }
+        
+        body.dark-theme .file-upload {
+            border-color: #444;
+            background: #1e1e2e;
+        }
+        
+        body.dark-theme .file-upload:hover {
+            border-color: #64b5f6;
+            background: #252538;
+        }
+        
+        body.dark-theme .contact-modal-content {
+            background: #2d2d44;
+        }
+        
+        body.dark-theme .contact-item-modal {
+            background: #1e1e2e;
+            border-left-color: #64b5f6;
+        }
+        
+        body.dark-theme .contact-label {
+            color: #e0e0e0;
+        }
+        
+        body.dark-theme .contact-value {
+            color: #64b5f6;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo {
+                margin-bottom: 15px;
+            }
+            
+            .auth-container {
+                margin-top: 15px;
+            }
+            
+            .hero h2 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .modal-content {
+                max-width: 95%;
+                margin: 20px;
+            }
+            
+            .report-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .report-actions {
+                justify-content: center;
+            }
+
+            .admin-tabs {
+                flex-direction: column;
+            }
+            
+            .profile-container {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-search-location"></i>
+                <h1>Lost and Found Portal</h1>
+            </div>
+            
+            <div class="auth-container" id="authContainer">
+                <div class="auth-btn login-btn" id="loginBtn">Login</div>
+                <div class="auth-btn signup-btn" id="signupBtn">Sign Up</div>
+                <!-- ✅ ADMIN BUTTON ADDED -->
+                <div class="auth-btn admin-btn" id="adminLoginBtn">
+                    <i class="fas fa-user-shield"></i> Admin
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="theme-toggle" id="themeToggle" title="Toggle Theme" style="display: block;">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <div class="profile-container" id="profileContainer">
+                    <img src="https://via.placeholder.com/50" alt="Profile" class="profile-picture" id="profilePicture">
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-item" id="profileBtn">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </div>
+                        <div class="dropdown-item" id="settingsBtn">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </div>
+                        <div class="dropdown-item" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="hero">
+            <h2>Find What You've Lost, Return What You've Found</h2>
+            <p>Our platform helps reunite lost items with their owners quickly and efficiently. Join our community today!</p>
+            <button class="cta-btn" id="heroCtaBtn">Get Started</button>
+        </div>
+        
+        <div class="upload-profile" id="uploadProfile">
+            <h3><i class="fas fa-user-plus"></i> Complete Your Profile</h3>
+            <p>Please upload a profile picture to continue using the Lost and Found Portal</p>
+            <input type="file" id="profileUpload" accept="image/*" style="display: none;">
+            <div class="upload-btn" id="uploadTrigger">Upload Profile Picture</div>
+        </div>
+        
+        <div class="dashboard" id="dashboard">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                <div class="user-welcome">Welcome, <span id="userName">User</span>!</div>
+            </div>
+            
+            <div class="dashboard-content">
+                <div class="dashboard-card" id="reportLostCard">
+                    <h3><i class="fas fa-search"></i> Report Lost Item</h3>
+                    <p>Can't find something? Report it here and we'll help you find it.</p>
+                </div>
+                <div class="dashboard-card" id="reportFoundCard">
+                    <h3><i class="fas fa-hand-holding-heart"></i> Report Found Item</h3>
+                    <p>Found something that doesn't belong to you? Report it here.</p>
+                </div>
+                
+                <div class="dashboard-card" id="myReportsCard">
+                    <h3><i class="fas fa-list"></i> My Reports</h3>
+                    <p>View all your lost and found item reports in one place.</p>
+                </div>
+
+                <div class="dashboard-card" id="viewPortalCard" style="display:none;">
+                    <h3><i class="fas fa-globe"></i> View Lost and Found</h3>
+                    <p>View all listed lost &amp; found items in one place.</p>
+                </div>
+
+                <div class="dashboard-card" id="claimsCenterCard" style="display:none;">
+                    <h3><i class="fas fa-handshake"></i> Claims Center</h3>
+                    <p>Review incoming claims and track the ones you submitted.</p>
+                </div>
+
+                <div class="dashboard-card" id="matchesCard" style="display:none;">
+                    <h3>
+                        <i class="fas fa-link"></i> Possible Matches
+                        <span class="badge" id="matchesBadge" style="display:none;">0</span>
+                    </h3>
+                    <p>See items that closely match your reports.</p>
+                    <small class="card-note" id="matchesUpdatedAt" style="display:none;"></small>
+                </div>
+
+                <div class="dashboard-card" id="notificationsCard" style="display:none; position: relative;">
+                    <h3><i class="fas fa-bell"></i> Notifications 
+                        <span class="badge" id="notificationBadge" style="display:none;">0</span>
+                    </h3>
+                    <p>Stay updated on claims, matches, and admin alerts.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ ADMIN DASHBOARD -->
+        <div class="admin-dashboard" id="adminDashboard">
+            <div class="page-header">
+                <h2><i class="fas fa-user-shield"></i> Admin Dashboard</h2>
+                <button class="back-btn" id="adminLogoutBtn">Logout</button>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="reports-tab">Manage Reports</button>
+                <button class="tab-btn" data-tab="users-tab">Manage Users</button>
+            </div>
+            
+            <div class="admin-content">
+                <div class="tab-content active" id="reports-tab">
+                    <h3>All Reports</h3>
+                    <div class="reports-list" id="adminReportsList">
+                        <!-- Admin ke liye sab reports yaha ayenge -->
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="users-tab">
+                    <h3>All Users</h3>
+                    <div class="users-list" id="adminUsersList">
+                        <!-- Sab users yaha ayenge -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Listings modal (opened by View Lost and Found card) -->
+        <div class="modal" id="listingsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-globe"></i> All Listings</h2>
+                    <div class="close-modal" id="closeListings">&times;</div>
+                </div>
+                <div class="modal-body">
+                    <div class="listings-filters">
+                        <div class="filter-group">
+                            <label for="filterSearch">Search</label>
+                            <input type="text" id="filterSearch" placeholder="Item name, description or location">
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterType">Type</label>
+                            <select id="filterType">
+                                <option value="">All</option>
+                                <option value="lost">Lost</option>
+                                <option value="found">Found</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterCategory">Category</label>
+                            <select id="filterCategory">
+                                <option value="">All categories</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="documents">Documents</option>
+                                <option value="jewelry">Jewelry</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="bags">Bags & Wallets</option>
+                                <option value="keys">Keys</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterLocation">Location</label>
+                            <input type="text" id="filterLocation" placeholder="e.g., campus, cafe, metro">
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterFromDate">From Date</label>
+                            <input type="date" id="filterFromDate">
+                        </div>
+                        <div class="filter-group">
+                            <label for="filterToDate">To Date</label>
+                            <input type="date" id="filterToDate">
+                        </div>
+                        <div class="filter-actions">
+                            <button class="filter-reset" id="resetListingsFilters">Reset</button>
+                            <button class="filter-apply" id="applyListingsFilters">
+                                <i class="fas fa-filter"></i> Apply
+                            </button>
+                        </div>
+                    </div>
+                    <div id="listingsList">
+                        <!-- JS will inject listing items here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="submit-btn" id="closeListingsBtn">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ Contact Details Modal -->
+        <div class="contact-modal" id="contactModal">
+            <div class="contact-modal-content">
+                <div class="contact-modal-header">
+                    <h2><i class="fas fa-address-card"></i> Contact Details</h2>
+                    <div class="close-modal" id="closeContactModal">&times;</div>
+                </div>
+                <div class="contact-modal-body">
+                    <div class="contact-info-modal" id="contactInfoModal">
+                        <!-- Contact details yaha load honge -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="submit-btn" id="closeContactBtn">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Claim Modal -->
+        <div class="modal" id="claimModal">
+            <div class="modal-content" style="max-width: 520px;">
+                <div class="modal-header">
+                    <h2><i class="fas fa-handshake"></i> Claim This Item</h2>
+                    <div class="close-modal" id="closeClaimModal">&times;</div>
+                </div>
+                <div class="modal-body">
+                    <div class="claim-modal-info">
+                        You are requesting ownership of <strong id="claimItemName"></strong>
+                    </div>
+                    <div class="form-group">
+                        <label for="claimMessage">Tell us why this item is yours *</label>
+                        <textarea id="claimMessage" placeholder="Add unique details, proof of purchase, or identifiers" rows="5"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="submit-btn" id="submitClaimBtn">
+                        <i class="fas fa-paper-plane"></i> Submit Claim
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matches Modal -->
+        <div class="modal" id="matchesModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-link"></i> Potential Matches</h2>
+                    <div class="close-modal" id="closeMatchesModal">&times;</div>
+                </div>
+                <div class="modal-body">
+                    <div class="matches-list" id="matchesList">
+                        <!-- Matches will render here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="modal-actions">
+                        <button class="filter-reset" id="refreshMatchesBtn">Refresh</button>
+                        <button class="submit-btn" id="closeMatchesBtn">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Modal -->
+        <div class="modal" id="notificationsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-bell"></i> Notifications</h2>
+                    <div class="close-modal" id="closeNotificationsModal">&times;</div>
+                </div>
+                <div class="modal-body">
+                    <div class="notifications-list" id="notificationsList">
+                        <!-- Notifications will render here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="modal-actions">
+                        <button class="filter-reset" id="markAllNotificationsBtn">Mark All Read</button>
+                        <button class="submit-btn" id="closeNotificationsBtn">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ ADMIN LOGIN MODAL -->
+        <div class="modal" id="adminLoginModal">
+            <div class="modal-content" style="max-width: 400px;">
+                <div class="modal-header" style="background: #dc3545;">
+                    <h2><i class="fas fa-user-shield"></i> Admin Login</h2>
+                    <div class="close-modal">&times;</div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="adminUsername">Username</label>
+                        <input type="text" id="adminUsername" placeholder="Enter admin username">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPassword">Password</label>
+                        <input type="password" id="adminPassword" placeholder="Enter admin password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="submit-btn" id="adminLoginSubmit" style="background: #dc3545;">
+                        <i class="fas fa-sign-in-alt"></i> Admin Login
+                    </button>
+                    <div class="switch-form">
+                        Regular user? <a id="switchToUserLogin">User Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Report Lost Item Modal -->
+        <div class="modal" id="reportLostModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-search"></i> Report Lost Item</h2>
+                    <div class="close-modal">&times;</div>
+                </div>
+                <div class="modal-body">
+                    <div class="report-form">
+                        <div class="form-group">
+                            <label for="lostItemName">Item Name *</label>
+                            <input type="text" id="lostItemName" placeholder="e.g., iPhone 13, Wallet, Keys" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lostCategory">Category *</label>
+                            <select id="lostCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="documents">Documents</option>
+                                <option value="jewelry">Jewelry</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="bags">Bags & Wallets</option>
+                                <option value="keys">Keys</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lostDescription">Description *</label>
+                            <textarea id="lostDescription" placeholder="Describe your lost item in detail (color, brand, distinctive features, contents if any)"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Upload Item Photo</label>
+                            <div class="file-upload" id="lostItemUpload">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload photo of lost item</p>
+                                <small>Supports: JPG, PNG, JPEG (Max 5MB)</small>
+                                <div class="file-name" id="lostFileName"></div>
+                            </div>
+                            <input type="file" id="lostItemPhoto" accept="image/*" style="display: none;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lostLocation">Last Seen Location *</label>
+                            <input type="text" id="lostLocation" placeholder="e.g., Central Park, Coffee Shop, Bus Stand" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lostDate">Date Lost *</label>
+                            <input type="datetime-local" id="lostDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lostContact">Contact Information *</label>
+                            <input type="text" id="lostContact" placeholder="Your phone number for contact" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="lostReward">Reward (Optional)</label>
+                            <input type="text" id="lostReward" placeholder="e.g., ₹500, Dinner treat">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-actions">
+                        <button class="cancel-btn" id="cancelLostReport">Cancel</button>
+                        <button class="submit-btn" id="submitLostReport">
+                            <i class="fas fa-paper-plane"></i> Submit Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Report Found Item Modal -->
+        <div class="modal" id="reportFoundModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-hand-holding-heart"></i> Report Found Item</h2>
+                    <div class="close-modal">&times;</div>
+                </div>
+                <div class="modal-body">
+                    <div class="report-form">
+                        <div class="form-group">
+                            <label for="foundItemName">Item Name *</label>
+                            <input type="text" id="foundItemName" placeholder="e.g., Black Wallet, Gold Earrings" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="foundCategory">Category *</label>
+                            <select id="foundCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="documents">Documents</option>
+                                <option value="jewelry">Jewelry</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="bags">Bags & Wallets</option>
+                                <option value="keys">Keys</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="foundDescription">Description *</label>
+                            <textarea id="foundDescription" placeholder="Describe the found item in detail"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Upload Item Photo</label>
+                            <div class="file-upload" id="foundItemUpload">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload photo of found item</p>
+                                <small>Supports: JPG, PNG, JPEG (Max 5MB)</small>
+                                <div class="file-name" id="foundFileName"></div>
+                            </div>
+                            <input type="file" id="foundItemPhoto" accept="image/*" style="display: none;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="foundLocation">Found Location *</label>
+                            <input type="text" id="foundLocation" placeholder="Where did you find this item?" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="foundDate">Date Found *</label>
+                            <input type="datetime-local" id="foundDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="foundContact">Your Contact Information *</label>
+                            <input type="text" id="foundContact" placeholder="How can the owner contact you?" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Current Location of Item</label>
+                            <select id="itemLocation">
+                                <option value="with-me">With Me</option>
+                                <option value="police-station">Handed to Police</option>
+                                <option value="security">Given to Security</option>
+                                <option value="other-location">Other Location</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-actions">
+                        <button class="cancel-btn" id="cancelFoundReport">Cancel</button>
+                        <button class="submit-btn" id="submitFoundReport">
+                            <i class="fas fa-paper-plane"></i> Submit Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- My Reports Page -->
+        <div class="reports-page" id="reportsPage">
+            <div class="page-header">
+                <h2><i class="fas fa-list"></i> My Reports</h2>
+                <button class="back-btn" id="backFromReports">Back to Dashboard</button>
+            </div>
+            <div class="reports-list" id="reportsList">
+                <!-- Reports will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Claims Center Page -->
+        <div class="claims-page" id="claimsPage">
+            <div class="page-header">
+                <h2><i class="fas fa-handshake"></i> Claims Center</h2>
+                <button class="back-btn" id="backFromClaims">Back to Dashboard</button>
+            </div>
+            <div class="claims-columns">
+                <div>
+                    <h3>Incoming Claims</h3>
+                    <div class="claims-board" id="incomingClaimsList"></div>
+                </div>
+                <div>
+                    <h3>My Submitted Claims</h3>
+                    <div class="claims-board" id="submittedClaimsList"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Page -->
+        <div class="profile-page" id="profilePage">
+            <div class="page-header">
+                <h2><i class="fas fa-user"></i> My Profile</h2>
+                <button class="back-btn" id="backFromProfile">Back to Dashboard</button>
+            </div>
+            <div class="profile-details" id="profileDetails">
+                <!-- Profile details will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Settings Page -->
+        <div class="settings-page" id="settingsPage">
+            <div class="page-header">
+                <h2><i class="fas fa-cog"></i> Settings</h2>
+                <button class="back-btn" id="backFromSettings">Back to Dashboard</button>
+            </div>
+            <div class="settings-options">
+                <div class="settings-option" id="notificationSettings">
+                    <h3><i class="fas fa-bell"></i> Notification Settings</h3>
+                    <p>Manage your email and push notifications</p>
+                </div>
+                <div class="settings-option" id="privacySettings">
+                    <h3><i class="fas fa-shield-alt"></i> Privacy Settings</h3>
+                    <p>Control your privacy and data sharing preferences</p>
+                </div>
+                <div class="settings-option" id="themeSettings">
+                    <h3><i class="fas fa-palette"></i> Theme Settings</h3>
+                    <p>Change the appearance of your portal</p>
+                </div>
+                <div class="settings-option" id="languageSettings">
+                    <h3><i class="fas fa-language"></i> Language Settings</h3>
+                    <p>Choose your preferred language</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Coming Soon Modal -->
+        <div class="modal" id="comingSoonModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Coming Soon</h2>
+                    <div class="close-modal">&times;</div>
+                </div>
+                <div class="modal-body">
+                    <div class="coming-soon">
+                        <i class="fas fa-tools"></i>
+                        <h3>Feature Under Development</h3>
+                        <p>We're working hard to bring you this amazing feature. Stay tuned for updates!</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="submit-btn" id="closeComingSoon">Got It</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Login Modal -->
+        <div class="modal" id="loginModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Login to Your Account</h2>
+                    <div class="close-modal">&times;</div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="submit-btn" id="loginSubmit">Login</button>
+                    <div class="switch-form">
+                        Don't have an account? <a id="switchToSignup">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Signup Modal -->
+        <div class="modal" id="signupModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Create New Account</h2>
+                    <div class="close-modal">&times;</div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPhone">Phone Number</label>
+                        <input type="tel" id="signupPhone" placeholder="Enter your phone number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a password">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupConfirmPassword">Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" placeholder="Confirm your password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="submit-btn" id="signupSubmit">Create Account</button>
+                    <div class="switch-form">
+                        Already have an account? <a id="switchToLogin">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ FEATURE CARDS - PERMANENT SECTION -->
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <h3>Easy Reporting</h3>
+                <p>Quickly report lost or found items with our simple form and process.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h3>Location Tracking</h3>
+                <p>Pinpoint exact locations where items were lost or found on our interactive map.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure Platform</h3>
+                <p>Your data is protected with advanced security measures and encryption.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2025 Lost and Found Portal. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:3000'; // abhi local, baad me Render URL dalenge
+
+        // ✅ Contact Modal Functions
+        function showContactModal(report) {
+            const contactInfoModal = document.getElementById('contactInfoModal');
+            
+            contactInfoModal.innerHTML = `
+                <div class="contact-item-modal">
+                    <i class="fas fa-phone"></i>
+                    <div class="contact-label">Phone:</div>
+                    <div class="contact-value">${report.contact}</div>
+                </div>
+                ${report.userPhone ? `
+                <div class="contact-item-modal">
+                    <i class="fas fa-mobile-alt"></i>
+                    <div class="contact-label">User Phone:</div>
+                    <div class="contact-value">${report.userPhone}</div>
+                </div>
+                ` : ''}
+                ${report.userEmail ? `
+                <div class="contact-item-modal">
+                    <i class="fas fa-envelope"></i>
+                    <div class="contact-label">Email:</div>
+                    <div class="contact-value">${report.userEmail}</div>
+                </div>
+                ` : ''}
+                ${report.userName ? `
+                <div class="contact-item-modal">
+                    <i class="fas fa-user"></i>
+                    <div class="contact-label">Reported By:</div>
+                    <div class="contact-value">${report.userName}</div>
+                </div>
+                ` : ''}
+                <div class="contact-item-modal">
+                    <i class="fas fa-info-circle"></i>
+                    <div class="contact-label">Item Type:</div>
+                    <div class="contact-value" style="text-transform: capitalize;">${report.type}</div>
+                </div>
+            `;
+            
+            document.getElementById('contactModal').style.display = 'flex';
+        }
+
+        function hideContactModal() {
+            document.getElementById('contactModal').style.display = 'none';
+        }
+
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const body = document.body;
+        
+        // Load saved theme preference
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-theme');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                body.classList.remove('dark-theme');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        }
+        
+        // Toggle theme
+        function toggleTheme() {
+            body.classList.toggle('dark-theme');
+            const isDark = body.classList.contains('dark-theme');
+            
+            if (isDark) {
+                localStorage.setItem('theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                localStorage.setItem('theme', 'light');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+        }
+        
+        // Initialize theme on page load
+        loadTheme();
+        
+        // Theme toggle event listener
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        // DOM Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const heroCtaBtn = document.getElementById('heroCtaBtn');
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        const closeModalButtons = document.querySelectorAll('.close-modal');
+        const switchToSignup = document.getElementById('switchToSignup');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const loginSubmit = document.getElementById('loginSubmit');
+        const signupSubmit = document.getElementById('signupSubmit');
+        const authContainer = document.getElementById('authContainer');
+        const profileContainer = document.getElementById('profileContainer');
+        const profilePicture = document.getElementById('profilePicture');
+
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        const uploadProfile = document.getElementById('uploadProfile');
+        const dashboard = document.getElementById('dashboard');
+        const uploadTrigger = document.getElementById('uploadTrigger');
+        const profileUpload = document.getElementById('profileUpload');
+        const userName = document.getElementById('userName');
+        
+        // Dashboard Cards
+        const reportLostCard = document.getElementById('reportLostCard');
+        const reportFoundCard = document.getElementById('reportFoundCard');
+        const myReportsCard = document.getElementById('myReportsCard');
+        const viewPortalCard = document.getElementById('viewPortalCard');
+        const claimsCenterCard = document.getElementById('claimsCenterCard');
+        const matchesCard = document.getElementById('matchesCard');
+        const matchesBadge = document.getElementById('matchesBadge');
+        const matchesUpdatedAt = document.getElementById('matchesUpdatedAt');
+        const notificationsCard = document.getElementById('notificationsCard');
+
+        // Listings modal elements
+        const listingsModal = document.getElementById('listingsModal');
+        const listingsList = document.getElementById('listingsList');
+        const closeListings = document.getElementById('closeListings');
+        const closeListingsBtn = document.getElementById('closeListingsBtn');
+        const filterSearch = document.getElementById('filterSearch');
+        const filterType = document.getElementById('filterType');
+        const filterCategory = document.getElementById('filterCategory');
+        const filterLocation = document.getElementById('filterLocation');
+        const filterFromDate = document.getElementById('filterFromDate');
+        const filterToDate = document.getElementById('filterToDate');
+        const applyListingsFilters = document.getElementById('applyListingsFilters');
+        const resetListingsFilters = document.getElementById('resetListingsFilters');
+
+        // Modals
+        const reportLostModal = document.getElementById('reportLostModal');
+        const reportFoundModal = document.getElementById('reportFoundModal');
+        const comingSoonModal = document.getElementById('comingSoonModal');
+        const contactModal = document.getElementById('contactModal');
+        
+        // Report Form Elements
+        const cancelLostReport = document.getElementById('cancelLostReport');
+        const submitLostReport = document.getElementById('submitLostReport');
+        const cancelFoundReport = document.getElementById('cancelFoundReport');
+        const submitFoundReport = document.getElementById('submitFoundReport');
+        const closeComingSoon = document.getElementById('closeComingSoon');
+        
+        // File Upload Elements
+        const lostItemUpload = document.getElementById('lostItemUpload');
+        const lostItemPhoto = document.getElementById('lostItemPhoto');
+        const lostFileName = document.getElementById('lostFileName');
+        const foundItemUpload = document.getElementById('foundItemUpload');
+        const foundItemPhoto = document.getElementById('foundItemPhoto');
+        const foundFileName = document.getElementById('foundFileName');
+        
+        // Pages
+        const profileBtn = document.getElementById('profileBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const profilePage = document.getElementById('profilePage');
+        const settingsPage = document.getElementById('settingsPage');
+        const reportsPage = document.getElementById('reportsPage');
+        const backFromProfile = document.getElementById('backFromProfile');
+        const backFromSettings = document.getElementById('backFromSettings');
+        const backFromReports = document.getElementById('backFromReports');
+        const profileDetails = document.getElementById('profileDetails');
+        const reportsList = document.getElementById('reportsList');
+    
+        // Settings Options
+        const notificationSettings = document.getElementById('notificationSettings');
+        const privacySettings = document.getElementById('privacySettings');
+        const themeSettings = document.getElementById('themeSettings');
+        const languageSettings = document.getElementById('languageSettings');
+
+        // ✅ ADMIN ELEMENTS
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const adminLoginModal = document.getElementById('adminLoginModal');
+        const adminLoginSubmit = document.getElementById('adminLoginSubmit');
+        const adminDashboard = document.getElementById('adminDashboard');
+        const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+        const adminReportsList = document.getElementById('adminReportsList');
+        const adminUsersList = document.getElementById('adminUsersList');
+        const switchToUserLogin = document.getElementById('switchToUserLogin');
+
+        // ✅ CLAIMS & MATCHES ELEMENTS
+        const claimsPage = document.getElementById('claimsPage');
+        const backFromClaims = document.getElementById('backFromClaims');
+        const incomingClaimsList = document.getElementById('incomingClaimsList');
+        const submittedClaimsList = document.getElementById('submittedClaimsList');
+        const claimModal = document.getElementById('claimModal');
+        const closeClaimModal = document.getElementById('closeClaimModal');
+        const claimItemName = document.getElementById('claimItemName');
+        const claimMessage = document.getElementById('claimMessage');
+        const submitClaimBtn = document.getElementById('submitClaimBtn');
+
+        const matchesModal = document.getElementById('matchesModal');
+        const matchesList = document.getElementById('matchesList');
+        const closeMatchesModal = document.getElementById('closeMatchesModal');
+        const closeMatchesBtn = document.getElementById('closeMatchesBtn');
+        const refreshMatchesBtn = document.getElementById('refreshMatchesBtn');
+
+        // ✅ NOTIFICATIONS ELEMENTS
+        const notificationsModal = document.getElementById('notificationsModal');
+        const notificationsList = document.getElementById('notificationsList');
+        const closeNotificationsModal = document.getElementById('closeNotificationsModal');
+        const closeNotificationsBtn = document.getElementById('closeNotificationsBtn');
+        const notificationBadge = document.getElementById('notificationBadge');
+        const markAllNotificationsBtn = document.getElementById('markAllNotificationsBtn');
+
+        let activeClaimReport = null;
+        let cachedMatches = [];
+        let matchesLastFetched = null;
+        let cachedNotifications = [];
+        let notificationsPollTimer = null;
+
+        // ✅ ADMIN LOGIN FUNCTIONALITY - FIXED VERSION
+        adminLoginBtn.addEventListener('click', () => {
+            showModal(adminLoginModal);
+        });
+
+        adminLoginSubmit.addEventListener('click', async () => {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            if (!username || !password) {
+                alert('❌ Please enter both username and password');
+                return;
+            }
+            
+            // Show loading state
+            adminLoginSubmit.classList.add('loading');
+            adminLoginSubmit.innerHTML = 'Logging in...';
+            
+            try {
+                const response = await fetch('${BACKEND_URL}/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('adminUser', JSON.stringify(data.admin));
+                    showAdminDashboard();
+                    hideModal(adminLoginModal);
+                    document.getElementById('adminUsername').value = '';
+                    document.getElementById('adminPassword').value = '';
+                    alert('✅ Admin login successful!');
+                } else {
+                    alert(`❌ ${data.error || 'Invalid admin credentials'}`);
+                }
+            } catch (error) {
+                console.error('Admin login error:', error);
+                alert('❌ Admin login failed. Please check:\n1. Backend server is running (localhost:3000)\n2. CORS is enabled\n3. Network connection');
+            } finally {
+                // Reset button state
+                adminLoginSubmit.classList.remove('loading');
+                adminLoginSubmit.innerHTML = '<i class="fas fa-sign-in-alt"></i> Admin Login';
+            }
+        });
+
+        // ✅ SHOW ADMIN DASHBOARD
+        function showAdminDashboard() {
+            document.body.classList.add('admin-theme');
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('profileContainer').classList.remove('active');
+            
+            loadAdminReports();
+            loadAdminUsers();
+            
+            // Tab functionality
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    btn.classList.add('active');
+                    const tabId = btn.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        // ✅ LOAD ADMIN REPORTS
+        function loadAdminReports() {
+            fetch('${BACKEND_URL}/api/admin/reports')
+                .then(response => response.json())
+                .then(data => {
+                    const reports = data.reports || [];
+                    displayAdminReports(reports);
+                })
+                .catch(error => {
+                    console.error('Error loading admin reports:', error);
+                });
+        }
+
+        // ✅ DISPLAY ADMIN REPORTS
+        function displayAdminReports(reports) {
+            if (reports.length === 0) {
+                adminReportsList.innerHTML = `
+                    <div class="no-reports">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No Reports Found</h3>
+                        <p>There are no reports in the system yet.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            adminReportsList.innerHTML = reports.map(report => `
+                <div class="admin-report-item">
+                    <div class="report-header">
+                        <div class="report-title">${report.itemName}</div>
+                        <div class="report-type ${report.type}">${report.type.toUpperCase()}</div>
+                    </div>
+                    <div class="report-details">
+                        <strong>Description:</strong> ${report.description}<br>
+                        <strong>Location:</strong> ${report.location}<br>
+                        <strong>Reported By:</strong> ${report.userName} (${report.userEmail})<br>
+                        ${report.reward ? `<strong>Reward:</strong> ${report.reward}<br>` : ''}
+                    </div>
+                    <div class="report-meta">
+                        <span><i class="fas fa-calendar"></i> ${new Date(report.date).toLocaleDateString()}</span>
+                        <span><i class="fas fa-user"></i> User ID: ${report.userId}</span>
+                    </div>
+                    ${report.photo ? `
+                        <div class="report-photo">
+                            <img src="${report.photo}" alt="${report.itemName}" style="max-width: 200px;">
+                        </div>
+                    ` : ''}
+                    <div class="report-actions">
+                        <button class="delete-btn" onclick="adminDeleteReport('${report.id}')">
+                            <i class="fas fa-trash"></i> Delete Report
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ✅ LOAD ADMIN USERS
+        function loadAdminUsers() {
+            fetch('${BACKEND_URL}/api/admin/users')
+                .then(response => response.json())
+                .then(data => {
+                    const users = data.users || [];
+                    displayAdminUsers(users);
+                })
+                .catch(error => {
+                    console.error('Error loading admin users:', error);
+                });
+        }
+
+        // ✅ DISPLAY ADMIN USERS
+        function displayAdminUsers(users) {
+            if (users.length === 0) {
+                adminUsersList.innerHTML = `
+                    <div class="no-reports">
+                        <i class="fas fa-users"></i>
+                        <h3>No Users Found</h3>
+                        <p>There are no registered users yet.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            adminUsersList.innerHTML = users.map(user => `
+                <div class="admin-user-item">
+                    <div class="report-header">
+                        <div class="report-title">${user.name}</div>
+                        <div class="report-type" style="background: #28a745; color: white;">USER</div>
+                    </div>
+                    <div class="report-details">
+                        <strong>Email:</strong> ${user.email}<br>
+                        <strong>Phone:</strong> ${user.phone || 'Not provided'}<br>
+                        <strong>User ID:</strong> ${user.id}
+                    </div>
+                    <div class="report-meta">
+                        <span><i class="fas fa-calendar"></i> Joined: ${new Date(user.created_at).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ✅ ADMIN DELETE REPORT
+        async function adminDeleteReport(reportId) {
+            if (confirm('Are you sure you want to delete this report as admin?')) {
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/admin/reports/${reportId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        alert('Report deleted successfully by admin!');
+                        loadAdminReports(); // Refresh list
+                    } else {
+                        alert('Failed to delete report.');
+                    }
+                } catch (error) {
+                    console.error('Admin delete error:', error);
+                    alert('Failed to delete report.');
+                }
+            }
+        }
+
+        // ✅ ADMIN LOGOUT
+        adminLogoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('adminUser');
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('authContainer').style.display = 'flex';
+            document.getElementById('profileContainer').classList.remove('active');
+            document.body.classList.remove('admin-theme');
+            checkLoginStatus();
+        });
+
+        // ✅ CHECK IF ADMIN IS LOGGED IN
+        function checkAdminStatus() {
+            const admin = JSON.parse(localStorage.getItem('adminUser'));
+            if (admin) {
+                showAdminDashboard();
+            }
+        }
+
+        // ✅ SWITCH TO USER LOGIN
+        switchToUserLogin.addEventListener('click', () => {
+            hideModal(adminLoginModal);
+            showModal(loginModal);
+        });
+
+        // ✅ UPDATED: Save report to DATABASE (not localStorage)
+        async function saveReport(reportData) {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (user) {
+                reportData.userData = JSON.stringify(user);
+                
+                const formData = new FormData();
+                formData.append('type', reportData.type);
+                formData.append('itemName', reportData.itemName);
+                formData.append('category', reportData.category);
+                formData.append('description', reportData.description);
+                formData.append('location', reportData.location);
+                formData.append('date', reportData.date);
+                formData.append('contact', reportData.contact);
+                formData.append('reward', reportData.reward || '');
+                formData.append('userData', reportData.userData);
+                
+                // Add photo file if exists
+                const photoInput = reportData.type === 'lost' ? lostItemPhoto : foundItemPhoto;
+                if (photoInput.files[0]) {
+                    formData.append('itemPhoto', photoInput.files[0]);
+                }
+                
+                try {
+                    const response = await fetch('${BACKEND_URL}/api/save-report', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        if (data.matches && data.matches.length > 0) {
+                            alert(`Heads up! We found ${data.matches.length} potential matches. Check the Possible Matches card.`);
+                        }
+                        return true;
+                    } else {
+                        console.error('Server error:', data.error);
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('Error saving report:', error);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        function getListingsFilterValues() {
+            return {
+                q: filterSearch.value.trim(),
+                type: filterType.value,
+                category: filterCategory.value,
+                location: filterLocation.value.trim(),
+                fromDate: filterFromDate.value,
+                toDate: filterToDate.value
+            };
+        }
+
+        // ✅ UPDATED: Load ALL listings from DATABASE with filters
+        function loadAllListings(filters = {}) {
+            const params = new URLSearchParams();
+            Object.entries(filters).forEach(([key, value]) => {
+                if (value && value.length !== 0) {
+                    params.append(key, value);
+                }
+            });
+
+            const queryString = params.toString() ? `?${params.toString()}` : '';
+
+            fetch(`${BACKEND_URL}/api/reports${queryString}`)
+
+                .then(response => response.json())
+                .then(data => {
+                    const allReports = data.reports || [];
+                    displayListings(allReports);
+                })
+                .catch(error => {
+                    console.error('Error loading from server:', error);
+                    displayListings([]);
+                });
+        }
+
+        // ✅ UPDATED: Load user reports from DATABASE
+        function loadUserReports() {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (user) {
+                fetch(`${BACKEND_URL}/api/user-reports/${user.id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const userReports = data.reports || [];
+                        displayUserReports(userReports);
+                    })
+                    .catch(error => {
+                        console.error('Error loading user reports:', error);
+                        displayUserReports([]);
+                    });
+            }
+        }
+
+        // ✅ UPDATED: Display user reports
+        function displayUserReports(userReports) {
+            if (userReports.length === 0) {
+                reportsList.innerHTML = `
+                    <div class="no-reports">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No Reports Yet</h3>
+                        <p>You haven't created any reports yet. Start by reporting a lost or found item!</p>
+                    </div>
+                `;
+            } else {
+                reportsList.innerHTML = userReports.map(report => `
+                    <div class="report-item" data-report-id="${report.id}">
+                        <div class="report-header">
+                            <div>
+                                <div class="report-title">${report.itemName}</div>
+                                <div class="report-type ${report.type}">${report.type.toUpperCase()}</div>
+                            </div>
+                            <div class="report-status status-${(report.status || 'open').replace(/\s+/g, '_')}">
+                                ${(report.status || 'open').replace(/_/g, ' ')}
+                            </div>
+                        </div>
+                        <div class="report-details">${report.description}</div>
+                        <div class="report-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> ${report.location}</span>
+                            <span><i class="fas fa-calendar"></i> ${new Date(report.date).toLocaleDateString()}</span>
+                        </div>
+                        ${report.photo ? `
+                            <div class="report-photo">
+                                <img src="${report.photo}" alt="${report.itemName}">
+                            </div>
+                        ` : ''}
+                        <div class="report-actions">
+                            <button class="delete-btn" onclick="deleteReport('${report.id}')">
+                                <i class="fas fa-trash"></i> Delete Report
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // ✅ UPDATED: Delete report from DATABASE
+        async function deleteReport(reportId) {
+            if (confirm('Are you sure you want to delete this report? This action cannot be undone.')) {
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/reports/${reportId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        // Reload lists
+                        loadUserReports();
+                        loadAllListings();
+                        alert('Report deleted successfully!');
+                    } else {
+                        alert('Failed to delete report. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error deleting report:', error);
+                    alert('Failed to delete report. Please try again.');
+                }
+            }
+        }
+
+        // Display listings function
+        function displayListings(allReports) {
+            const activeUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (allReports.length === 0) {
+                listingsList.innerHTML = `
+                    <div class="no-reports">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No Listings Yet</h3>
+                        <p>There are no lost/found listings available at the moment.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listingsList.innerHTML = allReports.map(report => {
+                const safeReport = JSON.stringify(report).replace(/"/g, '&quot;');
+                const statusLabel = (report.status || 'open').replace(/_/g, ' ');
+                const statusClass = `status-${(report.status || 'open').replace(/\s+/g, '_')}`;
+                const canClaim = activeUser && activeUser.id !== report.userId;
+
+                return `
+                    <div class="report-item" data-report-id="${report.id}">
+                        <div class="report-header">
+                            <div>
+                                <div class="report-title">${report.itemName}</div>
+                                <div class="report-type ${report.type}">${report.type.toUpperCase()}</div>
+                            </div>
+                            <div class="report-status ${statusClass}">${statusLabel}</div>
+                        </div>
+                        <div class="report-details">
+                            <strong>Description:</strong> ${report.description}<br>
+                            <strong>Location:</strong> ${report.location}<br>
+                            ${report.reward ? `<strong>Reward:</strong> ${report.reward}<br>` : ''}
+                            
+                            <div style="margin-top: 10px; text-align: center; display:flex; gap:10px; flex-wrap:wrap;">
+                                <button class="upload-btn" style="background: #28a745; padding: 8px 15px;" onclick="showContactModal(${safeReport})">
+                                    <i class="fas fa-eye"></i> View Contact Details
+                                </button>
+                                ${canClaim ? `
+                                    <button class="claim-btn" onclick="openClaimModal(${safeReport})">
+                                        <i class="fas fa-handshake"></i> Claim this item
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div class="report-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> ${report.location}</span>
+                            <span><i class="fas fa-calendar"></i> ${new Date(report.date).toLocaleDateString()}</span>
+                        </div>
+                        ${report.photo ? `
+                            <div class="report-photo">
+                                <img src="${report.photo}" alt="${report.itemName}">
+                            </div>
+                        ` : '<div class="report-photo" style="color: #6c757d; font-style: italic;">📷 No photo available</div>'}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openClaimModal(report) {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (!user) {
+                alert('Please login to submit a claim.');
+                return;
+            }
+            activeClaimReport = report;
+            claimItemName.textContent = report.itemName;
+            claimMessage.value = '';
+            showModal(claimModal);
+        }
+
+        function updateMatchesBadge() {
+            if (!matchesBadge) return;
+            const count = cachedMatches.length;
+            if (count > 0) {
+                matchesBadge.textContent = count;
+                matchesBadge.style.display = 'inline-flex';
+            } else {
+                matchesBadge.style.display = 'none';
+            }
+
+            if (matchesUpdatedAt) {
+                if (matchesLastFetched) {
+                    matchesUpdatedAt.textContent = `Updated ${new Date(matchesLastFetched).toLocaleTimeString()}`;
+                    matchesUpdatedAt.style.display = 'block';
+                } else {
+                    matchesUpdatedAt.style.display = 'none';
+                }
+            }
+        }
+
+        async function loadMatches({ openModal = false, force = false } = {}) {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (!user) {
+                if (openModal) alert('Please login to view matches.');
+                return;
+            }
+
+            const cacheIsFresh = !force && cachedMatches.length > 0 && matchesLastFetched && (Date.now() - matchesLastFetched < 2 * 60 * 1000);
+
+            if (cacheIsFresh) {
+                updateMatchesBadge();
+                if (openModal) {
+                    displayMatches(cachedMatches);
+                    showModal(matchesModal);
+                }
+                return;
+            }
+
+            if (openModal) {
+                matchesList.innerHTML = '<div class="matches-empty">Loading matches...</div>';
+                showModal(matchesModal);
+            }
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/matches/${user.id}`);
+                const data = await response.json();
+                cachedMatches = data.matches || [];
+                matchesLastFetched = Date.now();
+                updateMatchesBadge();
+                if (openModal) {
+                    displayMatches(cachedMatches);
+                }
+            } catch (error) {
+                console.error('Matches fetch error:', error);
+                if (openModal) {
+                    matchesList.innerHTML = '<div class="matches-empty">Failed to load matches.</div>';
+                }
+            }
+        }
+
+        async function submitClaim() {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (!user || !activeClaimReport) {
+                alert('Please login and select a report to claim.');
+                return;
+            }
+
+            const message = claimMessage.value.trim();
+            if (!message) {
+                alert('Please share some details that prove this item is yours.');
+                return;
+            }
+
+            submitClaimBtn.classList.add('loading');
+            submitClaimBtn.innerHTML = 'Submitting...';
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/reports/${activeClaimReport.id}/claims`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        claimerId: user.id,
+                        message
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('✅ Claim submitted! The owner has been notified.');
+                    hideModal(claimModal);
+                    loadSubmittedClaims();
+                } else {
+                    alert(data.error || 'Failed to submit claim. Please try again.');
+                }
+            } catch (error) {
+                console.error('Claim submission error:', error);
+                alert('Failed to submit claim. Please try again.');
+            } finally {
+                submitClaimBtn.classList.remove('loading');
+                submitClaimBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Claim';
+                activeClaimReport = null;
+            }
+        }
+
+        function loadClaimsCenter() {
+            loadIncomingClaims();
+            loadSubmittedClaims();
+            showPage(claimsPage);
+        }
+
+        function displayIncomingClaims(claims) {
+            if (!claims || claims.length === 0) {
+                incomingClaimsList.innerHTML = `
+                    <div class="claims-empty">
+                        <i class="fas fa-inbox"></i>
+                        <p>No incoming claims right now.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            incomingClaimsList.innerHTML = claims.map(claim => `
+                <div class="claim-card">
+                    <h4>${claim.item_name} • <span style="text-transform: uppercase;">${claim.report_type}</span></h4>
+                    <div class="claim-meta">
+                        <strong>From:</strong> ${claim.claimer_name} (${claim.claimer_email || 'No email'})<br>
+                        ${claim.claimer_phone ? `<strong>Phone:</strong> ${claim.claimer_phone}<br>` : ''}
+                        <strong>Message:</strong> ${claim.message}<br>
+                        <strong>Status:</strong> ${(claim.status || 'pending').toUpperCase()}
+                    </div>
+                    ${claim.status === 'pending' ? `
+                        <div class="claim-actions">
+                            <button class="claim-approve" onclick="updateClaimStatus('${claim.id}', 'approved')">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="claim-reject" onclick="updateClaimStatus('${claim.id}', 'rejected')">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function displaySubmittedClaims(claims) {
+            if (!claims || claims.length === 0) {
+                submittedClaimsList.innerHTML = `
+                    <div class="claims-empty">
+                        <i class="fas fa-inbox"></i>
+                        <p>You have not submitted any claims yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            submittedClaimsList.innerHTML = claims.map(claim => `
+                <div class="claim-card">
+                    <h4>${claim.item_name} • <span style="text-transform: uppercase;">${claim.report_type}</span></h4>
+                    <div class="claim-meta">
+                        <strong>Your Message:</strong> ${claim.message}<br>
+                        <strong>Status:</strong> ${(claim.status || 'pending').toUpperCase()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadIncomingClaims() {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (!user) return;
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/user/incoming-claims/${user.id}`);
+                const data = await response.json();
+                displayIncomingClaims(data.claims || []);
+            } catch (error) {
+                console.error('Incoming claims error:', error);
+                incomingClaimsList.innerHTML = '<div class="claims-empty">Failed to load incoming claims.</div>';
+            }
+        }
+
+        async function loadSubmittedClaims() {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (!user) return;
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/user/claims/${user.id}`);
+                const data = await response.json();
+                displaySubmittedClaims(data.claims || []);
+            } catch (error) {
+                console.error('Submitted claims error:', error);
+                submittedClaimsList.innerHTML = '<div class="claims-empty">Failed to load your claims.</div>';
+            }
+        }
+
+        async function updateClaimStatus(claimId, status) {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/claims/${claimId}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message || 'Status updated');
+                    loadIncomingClaims();
+                    loadSubmittedClaims();
+                    loadNotifications(false);
+                } else {
+                    alert(data.error || 'Failed to update claim status');
+                }
+            } catch (error) {
+                console.error('Update claim status error:', error);
+                alert('Failed to update claim status.');
+            }
+        }
+
+        function displayMatches(matches) {
+            if (!matches || matches.length === 0) {
+                matchesList.innerHTML = `
+                    <div class="matches-empty">
+                        <i class="fas fa-link"></i>
+                        <p>No strong matches yet. New matches will appear here automatically.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            matchesList.innerHTML = matches.map(pair => `
+                <div class="match-card">
+                    <h4>${pair.baseReport.itemName} (${pair.baseReport.type.toUpperCase()})</h4>
+                    <div class="match-info">
+                        Possible match: <strong>${pair.match.itemName}</strong> (${pair.match.type})<br>
+                        Location: ${pair.match.location}<br>
+                        Date: ${pair.match.date ? new Date(pair.match.date).toLocaleDateString() : 'Unknown'}<br>
+                        Contact: ${pair.match.userEmail || 'N/A'} ${pair.match.userPhone ? `| ${pair.match.userPhone}` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateNotificationBadge(count) {
+            if (!notificationBadge) return;
+            if (count > 0) {
+                notificationBadge.textContent = count;
+                notificationBadge.style.display = 'inline-flex';
+            } else {
+                notificationBadge.style.display = 'none';
+            }
+        }
+
+        function displayNotifications(notifications) {
+            const unreadCount = (notifications || []).filter(note => note.is_read === 0).length;
+            updateNotificationBadge(unreadCount);
+
+            if (!notifications || notifications.length === 0) {
+                notificationsList.innerHTML = `
+                    <div class="notifications-empty">
+                        <i class="fas fa-bell-slash"></i>
+                        <p>No notifications yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            notificationsList.innerHTML = notifications.map(note => `
+                <div class="notification-item">
+                    <h4>${note.title}</h4>
+                    <div class="notification-body">${note.body}</div>
+                    <div class="notification-meta" style="margin-top:10px; font-size:13px; color:#6c757d;">
+                        ${new Date(note.created_at).toLocaleString()}
+                    </div>
+                    ${note.is_read ? '' : `
+                        <div style="margin-top: 10px;">
+                            <button class="submit-btn" style="padding:10px;" onclick="markNotificationRead('${note.id}')">
+                                Mark as read
+                            </button>
+                        </div>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        async function loadNotifications(openModal = true, force = false) {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (!user) return;
+
+            const hasFreshCache = !force && cachedNotifications.length > 0;
+            if (hasFreshCache) {
+                displayNotifications(cachedNotifications);
+                if (openModal) {
+                    showModal(notificationsModal);
+                }
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/notifications/${user.id}`);
+                const data = await response.json();
+                cachedNotifications = data.notifications || [];
+                displayNotifications(cachedNotifications);
+                if (openModal) {
+                    showModal(notificationsModal);
+                }
+            } catch (error) {
+                console.error('Notifications fetch error:', error);
+                if (openModal) {
+                    notificationsList.innerHTML = '<div class="notifications-empty">Failed to load notifications.</div>';
+                }
+            }
+        }
+
+        async function markNotificationRead(notificationId) {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/notifications/${notificationId}/read`, {
+                    method: 'PATCH'
+                });
+                if (response.ok) {
+                    loadNotifications(false, true);
+                }
+            } catch (error) {
+                console.error('Mark notification error:', error);
+            }
+        }
+
+        async function markAllNotificationsRead() {
+            const unread = cachedNotifications.filter(note => note.is_read === 0);
+            if (unread.length === 0) {
+                alert('All caught up!');
+                return;
+            }
+
+            try {
+                await Promise.all(unread.map(note =>
+                    fetch(`${BACKEND_URL}/api/notifications/${note.id}/read`, { method: 'PATCH' })
+                ));
+                loadNotifications(false, true);
+            } catch (error) {
+                console.error('Mark all notifications error:', error);
+                alert('Failed to mark all notifications as read.');
+            }
+        }
+
+        function startNotificationsPolling() {
+            stopNotificationsPolling();
+            loadNotifications(false, true);
+            notificationsPollTimer = setInterval(() => {
+                loadNotifications(false, true);
+            }, 60000);
+        }
+
+        function stopNotificationsPolling() {
+            if (notificationsPollTimer) {
+                clearInterval(notificationsPollTimer);
+                notificationsPollTimer = null;
+            }
+            cachedNotifications = [];
+            updateNotificationBadge(0);
+        }
+
+        // Check if user is logged in
+        function checkLoginStatus() {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+            const admin = JSON.parse(localStorage.getItem('adminUser'));
+            
+            if (admin) {
+                showAdminDashboard();
+                return;
+            }
+
+            document.body.classList.remove('admin-theme');
+            
+            if (user) {
+                authContainer.style.display = 'none';
+                profileContainer.classList.add('active');
+                userName.textContent = user.name || 'User';
+                heroCtaBtn.style.display = 'none';
+                if (user.profilePicture) {
+                    profilePicture.src = user.profilePicture.startsWith('http')
+                    ? user.profilePicture
+                    : `${BACKEND_URL}/${user.profilePicture}`;
+                    uploadProfile.style.display = 'none';
+                    dashboard.style.display = 'block';
+                    viewPortalCard.style.display = 'block';
+                    if (claimsCenterCard) claimsCenterCard.style.display = 'block';
+                    if (matchesCard) matchesCard.style.display = 'block';
+                    if (notificationsCard) notificationsCard.style.display = 'block';
+                    startNotificationsPolling();
+                    loadMatches({ openModal: false });
+                } 
+                else {
+                    profilePicture.src = 'https://via.placeholder.com/50';
+                    uploadProfile.style.display = 'block';
+                    dashboard.style.display = 'none';
+                    viewPortalCard.style.display = 'none';
+                    if (claimsCenterCard) claimsCenterCard.style.display = 'none';
+                    if (matchesCard) matchesCard.style.display = 'none';
+                    if (notificationsCard) notificationsCard.style.display = 'none';
+                    stopNotificationsPolling();
+                    cachedMatches = [];
+                    matchesLastFetched = null;
+                    updateMatchesBadge();
+                }
+            } 
+            else {
+                authContainer.style.display = 'flex';
+                profileContainer.classList.remove('active');
+                uploadProfile.style.display = 'none';
+                dashboard.style.display = 'none';
+                profilePage.style.display = 'none';
+                settingsPage.style.display = 'none';
+                reportsPage.style.display = 'none';
+                claimsPage.style.display = 'none';
+                adminDashboard.style.display = 'none';
+                heroCtaBtn.style.display = 'block';
+                viewPortalCard.style.display = 'none';
+                if (claimsCenterCard) claimsCenterCard.style.display = 'none';
+                if (matchesCard) matchesCard.style.display = 'none';
+                if (notificationsCard) notificationsCard.style.display = 'none';
+                updateNotificationBadge(0);
+                stopNotificationsPolling();
+                cachedMatches = [];
+                matchesLastFetched = null;
+                updateMatchesBadge();
+            }
+        }
+
+        function showModal(modal) {
+            modal.style.display = 'flex';
+        }
+
+        function hideModal(modal) {
+            modal.style.display = 'none';
+        }
+
+        function showPage(page) {
+            dashboard.style.display = 'none';
+            profilePage.style.display = 'none';
+            settingsPage.style.display = 'none';
+            reportsPage.style.display = 'none';
+            claimsPage.style.display = 'none';
+            uploadProfile.style.display = 'none';
+            adminDashboard.style.display = 'none';
+            
+            page.style.display = 'block';
+        }
+
+        function loadProfileDetails() {
+            const user = JSON.parse(localStorage.getItem('loggedInUser'));
+            if (user) {
+                profileDetails.innerHTML = `
+                    <div class="detail-item">
+                        <div class="detail-label">Full Name</div>
+                        <div class="detail-value">${user.name}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Email Address</div>
+                        <div class="detail-value">${user.email}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Phone Number</div>
+                        <div class="detail-value">${user.phone || 'Not provided'}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Password</div>
+                        <div class="detail-value password-mask">••••••••</div>
+                    </div>
+                `;
+            }
+        }
+
+        // File upload handling
+        lostItemUpload.addEventListener('click', () => {
+            lostItemPhoto.click();
+        });
+
+        foundItemUpload.addEventListener('click', () => {
+            foundItemPhoto.click();
+        });
+
+        lostItemPhoto.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                lostFileName.textContent = e.target.files[0].name;
+            }
+        });
+
+        foundItemPhoto.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                foundFileName.textContent = e.target.files[0].name;
+            }
+        });
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            stopNotificationsPolling();
+            cachedMatches = [];
+            matchesLastFetched = null;
+            updateMatchesBadge();
+            checkLoginStatus();
+            dropdownMenu.style.display = 'none';
+            alert('You have been logged out successfully!');
+        }
+
+        // Event Listeners for Dashboard Cards
+        reportLostCard.addEventListener('click', () => {
+            showModal(reportLostModal);
+        });
+
+        reportFoundCard.addEventListener('click', () => {
+            showModal(reportFoundModal);
+        });
+
+        myReportsCard.addEventListener('click', () => {
+            loadUserReports();
+            showPage(reportsPage);
+        });
+
+        viewPortalCard.addEventListener('click', () => {
+            loadAllListings(getListingsFilterValues());
+            showModal(listingsModal);
+        });
+
+        if (claimsCenterCard) {
+            claimsCenterCard.addEventListener('click', () => {
+                dropdownMenu.style.display = 'none';
+                loadClaimsCenter();
+            });
+        }
+
+        if (matchesCard) {
+            matchesCard.addEventListener('click', () => {
+                dropdownMenu.style.display = 'none';
+                loadMatches({ openModal: true });
+            });
+        }
+
+        if (notificationsCard) {
+            notificationsCard.addEventListener('click', () => {
+                dropdownMenu.style.display = 'none';
+                loadNotifications(true);
+            });
+        }
+
+        // Close listings modal
+        closeListings.addEventListener('click', () => hideModal(listingsModal));
+        closeListingsBtn.addEventListener('click', () => hideModal(listingsModal));
+
+        applyListingsFilters.addEventListener('click', () => {
+            loadAllListings(getListingsFilterValues());
+        });
+
+        resetListingsFilters.addEventListener('click', () => {
+            filterSearch.value = '';
+            filterType.value = '';
+            filterCategory.value = '';
+            filterLocation.value = '';
+            filterFromDate.value = '';
+            filterToDate.value = '';
+            loadAllListings();
+        });
+
+        filterSearch.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                loadAllListings(getListingsFilterValues());
+            }
+        });
+
+        closeClaimModal.addEventListener('click', () => {
+            activeClaimReport = null;
+            hideModal(claimModal);
+        });
+
+        submitClaimBtn.addEventListener('click', submitClaim);
+
+        closeMatchesModal.addEventListener('click', () => hideModal(matchesModal));
+        closeMatchesBtn.addEventListener('click', () => hideModal(matchesModal));
+        if (refreshMatchesBtn) {
+            refreshMatchesBtn.addEventListener('click', () => loadMatches({ openModal: true, force: true }));
+        }
+
+        closeNotificationsModal.addEventListener('click', () => hideModal(notificationsModal));
+        closeNotificationsBtn.addEventListener('click', () => hideModal(notificationsModal));
+        if (markAllNotificationsBtn) {
+            markAllNotificationsBtn.addEventListener('click', markAllNotificationsRead);
+        }
+
+        // ✅ Event Listeners for Contact Modal
+        document.getElementById('closeContactModal').addEventListener('click', hideContactModal);
+        document.getElementById('closeContactBtn').addEventListener('click', hideContactModal);
+
+        // Event Listeners for Settings
+        notificationSettings.addEventListener('click', () => {
+            showModal(comingSoonModal);
+        });
+
+        privacySettings.addEventListener('click', () => {
+            showModal(comingSoonModal);
+        });
+
+        themeSettings.addEventListener('click', () => {
+            showModal(comingSoonModal);
+        });
+
+        languageSettings.addEventListener('click', () => {
+            showModal(comingSoonModal);
+        });
+
+        // Report Form Submissions with loading animation
+        submitLostReport.addEventListener('click', async () => {
+            const itemName = document.getElementById('lostItemName').value;
+            const category = document.getElementById('lostCategory').value;
+            const description = document.getElementById('lostDescription').value;
+            const location = document.getElementById('lostLocation').value;
+            const date = document.getElementById('lostDate').value;
+            const contact = document.getElementById('lostContact').value;
+            const reward = document.getElementById('lostReward').value;
+            const photoFile = lostItemPhoto.files[0];
+
+            if (!itemName || !category || !description || !location || !date || !contact) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Add loading animation
+            submitLostReport.classList.add('loading');
+            submitLostReport.innerHTML = 'Submitting...';
+
+            const reportData = {
+                type: 'lost',
+                itemName,
+                category,
+                description,
+                location,
+                date,
+                contact,
+                reward
+            };
+
+            // Save report to DATABASE
+            setTimeout(async () => {
+                if (await saveReport(reportData)) {
+                    submitLostReport.classList.remove('loading');
+                    submitLostReport.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Report';
+                    
+                    alert('Lost item report submitted successfully!');
+                    hideModal(reportLostModal);
+                    
+                    // Clear form
+                    document.getElementById('lostItemName').value = '';
+                    document.getElementById('lostCategory').value = '';
+                    document.getElementById('lostDescription').value = '';
+                    document.getElementById('lostLocation').value = '';
+                    document.getElementById('lostDate').value = '';
+                    document.getElementById('lostContact').value = '';
+                    document.getElementById('lostReward').value = '';
+                    lostItemPhoto.value = '';
+                    lostFileName.textContent = '';
+                    
+                    // Refresh listings
+                    loadAllListings();
+                } else {
+                    submitLostReport.classList.remove('loading');
+                    submitLostReport.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Report';
+                    alert('Failed to submit report. Please try again.');
+                }
+            }, 1500);
+        });
+
+        submitFoundReport.addEventListener('click', async () => {
+            const itemName = document.getElementById('foundItemName').value;
+            const category = document.getElementById('foundCategory').value;
+            const description = document.getElementById('foundDescription').value;
+            const location = document.getElementById('foundLocation').value;
+            const date = document.getElementById('foundDate').value;
+            const contact = document.getElementById('foundContact').value;
+            const itemLocation = document.getElementById('itemLocation').value;
+            const photoFile = foundItemPhoto.files[0];
+
+            if (!itemName || !category || !description || !location || !date || !contact) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Add loading animation
+            submitFoundReport.classList.add('loading');
+            submitFoundReport.innerHTML = 'Submitting...';
+
+            const reportData = {
+                type: 'found',
+                itemName,
+                category,
+                description,
+                location,
+                date,
+                contact,
+                itemLocation
+            };
+
+            // Save report to DATABASE
+            setTimeout(async () => {
+                if (await saveReport(reportData)) {
+                    submitFoundReport.classList.remove('loading');
+                    submitFoundReport.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Report';
+                    
+                    alert('Found item report submitted successfully!');
+                    hideModal(reportFoundModal);
+                    
+                    // Clear form
+                    document.getElementById('foundItemName').value = '';
+                    document.getElementById('foundCategory').value = '';
+                    document.getElementById('foundDescription').value = '';
+                    document.getElementById('foundLocation').value = '';
+                    document.getElementById('foundDate').value = '';
+                    document.getElementById('foundContact').value = '';
+                    document.getElementById('itemLocation').value = 'with-me';
+                    foundItemPhoto.value = '';
+                    foundFileName.textContent = '';
+                    
+                    // Refresh listings
+                    loadAllListings();
+                } else {
+                    submitFoundReport.classList.remove('loading');
+                    submitFoundReport.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Report';
+                    alert('Failed to submit report. Please try again.');
+                }
+            }, 1500);
+        });
+
+        // Cancel buttons
+        cancelLostReport.addEventListener('click', () => {
+            hideModal(reportLostModal);
+        });
+
+        cancelFoundReport.addEventListener('click', () => {
+            hideModal(reportFoundModal);
+        });
+
+        closeComingSoon.addEventListener('click', () => {
+            hideModal(comingSoonModal);
+        });
+
+        // Previous event listeners (login, signup, profile, etc.)
+        loginBtn.addEventListener('click', () => showModal(loginModal));
+        signupBtn.addEventListener('click', () => showModal(signupModal));
+        heroCtaBtn.addEventListener('click', () => showModal(signupModal));
+
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                hideModal(loginModal);
+                hideModal(signupModal);
+                hideModal(reportLostModal);
+                hideModal(reportFoundModal);
+                hideModal(comingSoonModal);
+                hideModal(listingsModal);
+                hideModal(contactModal);
+                hideModal(adminLoginModal);
+                hideModal(claimModal);
+                hideModal(matchesModal);
+                hideModal(notificationsModal);
+            });
+        });
+
+        switchToSignup.addEventListener('click', () => {
+            hideModal(loginModal);
+            showModal(signupModal);
+        });
+
+        switchToLogin.addEventListener('click', () => {
+            hideModal(signupModal);
+            showModal(loginModal);
+        });
+
+        profilePicture.addEventListener('click', () => {
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!profileContainer.contains(e.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
+
+        profileBtn.addEventListener('click', () => {
+            dropdownMenu.style.display = 'none';
+            loadProfileDetails();
+            showPage(profilePage);
+        });
+
+        settingsBtn.addEventListener('click', () => {
+            dropdownMenu.style.display = 'none';
+            showPage(settingsPage);
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            dropdownMenu.style.display = 'none';
+            logout();
+        });
+
+        backFromProfile.addEventListener('click', () => {
+            showPage(dashboard);
+        });
+
+        backFromSettings.addEventListener('click', () => {
+            showPage(dashboard);
+        });
+
+        backFromReports.addEventListener('click', () => {
+            showPage(dashboard);
+        });
+
+        backFromClaims.addEventListener('click', () => {
+            showPage(dashboard);
+        });
+
+        uploadTrigger.addEventListener('click', () => {
+            profileUpload.click();
+        });
+
+        // Login form submission
+        loginSubmit.addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('loggedInUser', JSON.stringify(data.user));
+                    checkLoginStatus();
+                    hideModal(loginModal);
+                    document.getElementById('loginEmail').value = '';
+                    document.getElementById('loginPassword').value = '';
+                    if (data.user.profilePicture) {
+                        showPage(dashboard);
+                    }
+                } else {
+                    alert(data.error || 'Login failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed. Please make sure the backend server is running.');
+            }
+        });
+
+        // Signup form submission
+        signupSubmit.addEventListener('click', async () => {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const phone = document.getElementById('signupPhone').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            
+            if (!name || !email || !phone || !password || !confirmPassword) {
+                alert('Please fill in all fields including phone number');
+                return;
+            }
+            
+            if (phone.length < 10) {
+                alert('Please enter a valid phone number (at least 10 digits)');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            try {
+                const response = await fetch('${BACKEND_URL}/api/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, phone, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // auto-login after signup
+                    const loginResponse = await fetch(`${BACKEND_URL}/api/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+                    
+                    const loginData = await loginResponse.json();
+                    
+                    if (loginResponse.ok) {
+                        localStorage.setItem('loggedInUser', JSON.stringify(loginData.user));
+                        checkLoginStatus();
+
+                        if (loginData.user && loginData.user.profilePicture) {
+                            showPage(dashboard);
+                        }
+
+                        hideModal(signupModal);
+                        document.getElementById('signupName').value = '';
+                        document.getElementById('signupEmail').value = '';
+                        document.getElementById('signupPhone').value = '';
+                        document.getElementById('signupPassword').value = '';
+                        document.getElementById('signupConfirmPassword').value = '';
+                    } else {
+                        alert(loginData.error || 'Signup created but login failed. Please try logging in.');
+                    }
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert('Signup failed. Please make sure the backend server is running.');
+            }
+        });
+
+        // Profile upload handler
+        profileUpload.addEventListener('change', async (e) => {
+            if (e.target.files && e.target.files[0]) {
+                const user = JSON.parse(localStorage.getItem('loggedInUser'));
+                if (!user) {
+                    alert('Please login/signup first.');
+                    return;
+                }
+                const file = e.target.files[0];
+                const formData = new FormData();
+                formData.append('profilePicture', file);
+                formData.append('userId', user.id);
+                try {
+                    const response = await fetch('${BACKEND_URL}/api/upload-profile', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        const returnedPath = data.profilePicture;
+                        user.profilePicture = returnedPath;
+                        localStorage.setItem('loggedInUser', JSON.stringify(user));
+                        profilePicture.src = returnedPath.startsWith('http')
+                        ? returnedPath
+                        : `${BACKEND_URL}/${returnedPath}`;
+                        uploadProfile.style.display = 'none';
+                        dashboard.style.display = 'block';
+                        viewPortalCard.style.display = 'block';
+                        alert('Profile picture uploaded successfully!');
+                    } else {
+                        alert(data.error || 'Upload failed. Try again.');
+                    }
+                } catch (err) {
+                    console.error('Upload error:', err);
+                    alert('Failed to upload profile picture. Please try again.');
+                }
+            }
+        });
+
+        // Initialize the application
+        checkLoginStatus();
+        checkAdminStatus();
+
+        // Set current date-time for forms
+        document.getElementById('lostDate').value = new Date().toISOString().slice(0, 16);
+        document.getElementById('foundDate').value = new Date().toISOString().slice(0, 16);
+
+        // Make deleteReport function globally available
+        window.deleteReport = deleteReport;
+        window.showContactModal = showContactModal;
+        window.adminDeleteReport = adminDeleteReport;
+    </script>
+</body>
+</html>
